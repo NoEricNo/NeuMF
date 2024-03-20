@@ -6,15 +6,15 @@ import torch.nn as nn
 
 
 class Trainer:
-    def __init__(self, model, train_dataloader, val_dataloader, num_users, num_items, learning_rate=0.001,
-                 batch_size=512, num_epochs=100):
+    def __init__(self, model, train_dataloader, val_dataloader, num_users, num_items, learning_rate=0.0001,
+                 num_epochs=100):
         self.model = model
         self.train_dataloader = train_dataloader
         self.val_dataloader = val_dataloader
         self.num_users = num_users
         self.num_items = num_items
         self.learning_rate = learning_rate
-        self.batch_size = batch_size
+
         self.num_epochs = num_epochs
 
         self.optimizer = Adam(self.model.parameters(), lr=self.learning_rate)
@@ -40,6 +40,10 @@ class Trainer:
 
     def train(self):
 
+        best_val_loss = float('inf')
+        patience = 10  # Number of epochs to wait for improvement before stopping
+        wait = 0  # The counter for epochs waited without improvement
+
         self.model.train()  # Set the model to training mode
         for epoch in range(self.num_epochs):
             running_loss = 0.0
@@ -64,11 +68,22 @@ class Trainer:
 
             validation_loss = self.validate()
             print(f'Epoch: {epoch}, Validation Loss: {validation_loss}')
+
+            if validation_loss < best_val_loss:
+                best_val_loss = validation_loss
+                wait = 0
+                # Save model state if this is the best performance so far
+                torch.save(self.model.state_dict(), 'best_model.pth')
+            else:
+                wait += 1
+                if wait >= patience:
+                    print(f'Stopping training. Best validation loss: {best_val_loss}')
+                    break
+
             self.scheduler.step(validation_loss)
 
             print(f'Epoch [{epoch + 1}/{self.num_epochs}], Loss: {running_loss / len(self.train_dataloader)}')
 
-
 # Assuming model, train_dataloader, num_users, num_items are already defined
-#trainer = Trainer(model, train_dataloader, num_users, num_items)
-#trainer.train()
+# trainer = Trainer(model, train_dataloader, num_users, num_items)
+# trainer.train()

@@ -5,14 +5,16 @@ from torch.utils.data import TensorDataset, DataLoader
 
 
 # Define the Neural Collaborative Filtering (NCF) model class, extending PyTorch's Module class.
-class NCF(nn.Module):
+class MLP(nn.Module):
     # Initialize the NCF model with user/item counts, hidden layer size, and MLP structure base.
-    def __init__(self, num_users, num_items, hidden_size, MLP_layers):
-        super(NCF, self).__init__()  # Initialize the superclass (nn.Module) to set up the model.
+    def __init__(self, num_users, num_items, hidden_size, MLP_layers, dropout_rate=0.5):
+        super(MLP, self).__init__()  # Initialize the superclass (nn.Module) to set up the model.
 
         # Embedding layers for users and items, transforming IDs into dense vectors of size `hidden_size`.
         self.user_embedding = nn.Embedding(num_users, hidden_size)
         self.item_embedding = nn.Embedding(num_items, hidden_size)
+
+        self.dropout_rate = dropout_rate
 
         # Dynamic MLP creation based on MLP_layers configuration
         self.MLP = self._create_mlp(hidden_size * 2, MLP_layers)
@@ -25,6 +27,7 @@ class NCF(nn.Module):
         for output_size in MLP_layers:
             layers.append(nn.Linear(input_size, output_size))
             layers.append(nn.ReLU())
+            layers.append(nn.Dropout(self.dropout_rate))  # Add a dropout layer after each ReLU
             input_size = output_size  # Next layer's input size is the current layer's output size
         return nn.Sequential(*layers)
 
@@ -37,15 +40,14 @@ class NCF(nn.Module):
         # Pass concatenated embeddings through MLP
         mlp_output = self.MLP(concat_embed)
         # Generate prediction
-
         preds = self.predict_layer(mlp_output)
         return preds.view(-1)
 
     # A prediction method that disables gradient calculations for inference.
     def predict(self, user_id, item_id):
         with torch.no_grad():  # Context manager that disables gradient computation.
-            return self(user_id,
-                        item_id).squeeze()  # Call the forward method and squeeze the result to remove extra dimensions.
+            # Call the forward method and squeeze the result to remove extra dimensions.
+            return self(user_id, item_id).squeeze()
 
 
 
