@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d8b9bc95-dbe9-4bfb-b61a-141bd2ba7b0a" name="Changes" comment="I finished the MLP, now I need to do GMF and combine them.">
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ncf_FlexibleMLP.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ncf_model.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ncf_trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/ncf_trainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/best_model.pth" beforeDir="false" afterPath="$PROJECT_DIR$/best_model.pth" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +26,8 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Python.main.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
@@ -55,7 +54,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1710915044632</updated>
-      <workItem from="1710915045664" duration="374000" />
+      <workItem from="1710915045664" duration="740000" />
     </task>
     <servers />
   </component>
