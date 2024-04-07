@@ -10,7 +10,7 @@ from torch.utils.data import TensorDataset
 import numpy as np
 import torch.optim as optim
 from torch.optim.lr_scheduler import StepLR
-
+from ncf_tester import Evaluator
 """
 # for GMF
 # need to tune learning rate in trainer (class)
@@ -31,21 +31,26 @@ from torch.optim.lr_scheduler import StepLR
 # maybe we should consider different optimizer aside from ADAM
 """
 
-dataset = Dataset(dataset_name="100k", batch_size=16)
+dataset = Dataset(dataset_name="100k", batch_size=8)
 dataset.chrono_split(train_ratio=0.6, val_ratio=0.2)
 print(dataset.train_df.columns)
 
 train_dataloader = dataset.prepare_dataloader(dataset.train_df)
 val_dataloader = dataset.prepare_dataloader(dataset.val_df)
+test_dataloader = dataset.prepare_dataloader(dataset.test_df)
+
 num_users, num_items = ncf_dataset.get_user_item_counts(dataset.all_df)
 if ncf_dataset.check_id_gaps(dataset.train_df):
     print("Warning: There are gaps in user IDs or item IDs.")
 
-GMF_hidden_size = 8
-MLP_hidden_size = 8
-MLP_layers = [64, 32]
+GMF_hidden_size = 16
+MLP_hidden_size = 16
+MLP_layers = [64, 32, 16]
 # MLP_model = MLP(num_users, num_items, hidden_size, MLP_layers)
 # GMF_model = BiasedGMF(num_users, num_items, hidden_size)
 NeuMF_model = NeuMF(num_users, num_items, MLP_layers, GMF_hidden_size, MLP_hidden_size )
 trainer = Trainer(NeuMF_model, train_dataloader, val_dataloader, num_users, num_items)
 trainer.train()  # Start training
+evaluator = Evaluator(NeuMF_model, test_dataloader)
+rmse, mae = evaluator.evaluate()
+print(f"RMSE: {rmse}, MAE: {mae}")
