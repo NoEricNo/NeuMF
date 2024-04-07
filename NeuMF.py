@@ -5,7 +5,7 @@ from gmf_model import BiasedGMF
 
 
 class NeuMF(nn.Module):
-    def __init__(self, num_users, num_items, mlp_layers, gmf_hidden_size, mlp_hidden_size, dropout_rate=0.5):
+    def __init__(self, num_users, num_items, mlp_layers, gmf_hidden_size, mlp_hidden_size, dropout_rate):
         super(NeuMF, self).__init__()
 
         # Initialize GMF and MLP models
