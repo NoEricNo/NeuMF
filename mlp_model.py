@@ -7,9 +7,10 @@ from torch.utils.data import TensorDataset, DataLoader
 # Define the Neural Collaborative Filtering (NCF) model class, extending PyTorch's Module class.
 class MLP(nn.Module):
     # Initialize the NCF model with user/item counts, hidden layer size, and MLP structure base.
-    def __init__(self, num_users, num_items, hidden_size, MLP_layers, dropout_rate=0.5):
+    def __init__(self, num_users, num_items, hidden_size, MLP_layers, dropout_rate=0.5, output_features=False):
         super(MLP, self).__init__()  # Initialize the superclass (nn.Module) to set up the model.
 
+        self.output_features = output_features
         # Embedding layers for users and items, transforming IDs into dense vectors of size `hidden_size`.
         self.user_embedding = nn.Embedding(num_users, hidden_size)
         self.item_embedding = nn.Embedding(num_items, hidden_size)
@@ -40,6 +41,9 @@ class MLP(nn.Module):
         # Pass concatenated embeddings through MLP
         mlp_output = self.MLP(concat_embed)
         # Generate prediction
+        # If output_features is True, return the last hidden layer features instead of the final prediction
+        if self.output_features:
+            return mlp_output
         preds = self.predict_layer(mlp_output)
         return preds.view(-1)
 
