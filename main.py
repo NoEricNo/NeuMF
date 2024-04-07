@@ -29,9 +29,23 @@ from ncf_tester import Evaluator
 # for both
 # remember to make weight decay value higher for GMF since GMF does not have dropout mechanism
 # maybe we should consider different optimizer aside from ADAM
+
+# in the trainer class
+# the patience is declared in the train function, remember that this value needs to be higher 
+$ than the patience is the ReduceLROnPlateau scheduler
 """
 
-dataset = Dataset(dataset_name="100k", batch_size=8)
+GMF_hidden_size = 16
+MLP_hidden_size = 16
+MLP_layers = [64, 32, 16]
+# lr = 0.0001 learning rate.
+# batch_size = ? # the powers of 2
+# lr_patience = ?
+# stop_patience = lr_patience + ?
+
+# something else?
+
+dataset = Dataset(dataset_name="100k", batch_size=batch_size)
 dataset.chrono_split(train_ratio=0.6, val_ratio=0.2)
 print(dataset.train_df.columns)
 
@@ -43,9 +57,6 @@ num_users, num_items = ncf_dataset.get_user_item_counts(dataset.all_df)
 if ncf_dataset.check_id_gaps(dataset.train_df):
     print("Warning: There are gaps in user IDs or item IDs.")
 
-GMF_hidden_size = 16
-MLP_hidden_size = 16
-MLP_layers = [64, 32, 16]
 # MLP_model = MLP(num_users, num_items, hidden_size, MLP_layers)
 # GMF_model = BiasedGMF(num_users, num_items, hidden_size)
 NeuMF_model = NeuMF(num_users, num_items, MLP_layers, GMF_hidden_size, MLP_hidden_size )

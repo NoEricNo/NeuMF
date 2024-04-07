@@ -7,7 +7,7 @@ import torch.nn as nn
 
 class Trainer:
     def __init__(self, model, train_dataloader, val_dataloader, num_users, num_items, learning_rate=0.0001,
-                 num_epochs=100):
+                 num_epochs=100, lr_patience=5, stop_loss_patience=10):
         self.model = model
         self.train_dataloader = train_dataloader
         self.val_dataloader = val_dataloader
@@ -19,8 +19,20 @@ class Trainer:
 
         self.optimizer = Adam(self.model.parameters(), lr=self.learning_rate)
         self.criterion = nn.MSELoss()
+        self.lr_patience = lr_patience=5  # Patience for learning rate reduction
+        self.stop_patience = stop_loss_patience  # Patience for early stopping
         # self.scheduler = StepLR(self.optimizer, step_size=10, gamma=0.9)
-        self.scheduler = ReduceLROnPlateau(self.optimizer, mode='min', factor=0.1, patience=10)
+        self.scheduler = ReduceLROnPlateau(self.optimizer, mode='min', factor=0.9, patience=lr_patience)
+        # Weight decay is a regularization technique used to prevent overfitting by penalizing large weights
+        # in the model's parameters. It works by adding a portion of the weights' magnitude to the loss function,
+        # effectively encouraging the model to maintain smaller weight values. This is equivalent to
+        # applying L2 regularization. In PyTorch, weight decay is specified as a parameter in the optimizer,
+        # not within the model itself (e.g., the GMF class). For example, when initializing an optimizer like
+        # Adam or SGD, you can set the weight_decay parameter:
+
+        # A higher weight decay value increases the regularization strength, which can help reduce overfitting
+        # but may also lead to underfitting if too strong.
+        # e.g.: optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
 
     def validate(self):
         self.model.eval()  # Set the model to evaluation mode
@@ -41,7 +53,7 @@ class Trainer:
     def train(self):
 
         best_val_loss = float('inf')
-        patience = 10  # Number of epochs to wait for improvement before stopping
+        patience = self.stop_patience  # Number of epochs to wait for improvement before stopping
         wait = 0  # The counter for epochs waited without improvement
 
         self.model.train()  # Set the model to training mode
