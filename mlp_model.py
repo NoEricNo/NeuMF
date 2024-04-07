@@ -7,7 +7,7 @@ from torch.utils.data import TensorDataset, DataLoader
 # Define the Neural Collaborative Filtering (NCF) model class, extending PyTorch's Module class.
 class MLP(nn.Module):
     # Initialize the NCF model with user/item counts, hidden layer size, and MLP structure base.
-    def __init__(self, num_users, num_items, hidden_size, MLP_layers, dropout_rate=0.5, output_features=False):
+    def __init__(self, num_users, num_items, hidden_size, MLP_layers, dropout_rate=0.2, output_features=False):
         super(MLP, self).__init__()  # Initialize the superclass (nn.Module) to set up the model.
 
         self.output_features = output_features
@@ -16,6 +16,9 @@ class MLP(nn.Module):
         self.item_embedding = nn.Embedding(num_items, hidden_size)
 
         self.dropout_rate = dropout_rate
+        # The dropout rate specifies the probability at which inputs (or activations in intermediate layers) are
+        # randomly set to zero during training. This technique helps prevent overfitting by forcing the network to
+        # learn more robust features that are not reliant on any single input.
 
         # Dynamic MLP creation based on MLP_layers configuration
         self.MLP = self._create_mlp(hidden_size * 2, MLP_layers)
