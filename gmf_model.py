@@ -26,8 +26,13 @@ class BiasedGMF(nn.Module):
         item_embed = self.item_embedding(item_ids)
 
         # Get bias embeddings for users and items
-        user_b = self.user_bias(user_ids).squeeze()
-        item_b = self.item_bias(item_ids).squeeze()
+        # Avoid squeezing if the batch size is 1
+        if user_ids.size(0) > 1:
+            user_b = self.user_bias(user_ids).squeeze()
+            item_b = self.item_bias(item_ids).squeeze()
+        else:
+            user_b = self.user_bias(user_ids).squeeze(1)
+            item_b = self.item_bias(item_ids).squeeze(1)
 
         # Element-wise multiplication of user and item embeddings
         interaction = torch.mul(user_embed, item_embed)

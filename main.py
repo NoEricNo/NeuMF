@@ -1,15 +1,7 @@
-import torch
-from mlp_model import MLP
-from gmf_model import BiasedGMF
-from NeuMF import NeuMF
 import ncf_dataset
+from NeuMF import NeuMF
 from ncf_dataset import Dataset
 from ncf_trainer import Trainer
-from torch.utils.data import DataLoader
-from torch.utils.data import TensorDataset
-import numpy as np
-import torch.optim as optim
-from torch.optim.lr_scheduler import StepLR
 from datetime import datetime
 from ncf_tester import Evaluator
 """
@@ -36,21 +28,21 @@ from ncf_tester import Evaluator
 $ than the patience is the ReduceLROnPlateau scheduler
 """
 max_epochs = 100
-GMF_hidden_size = 4
-MLP_hidden_size = 4
-MLP_layers = [64, 32, 16]
+GMF_hidden_size = 2
+MLP_hidden_size = 2
+MLP_layers = [512, 256]
 lr = 0.001  # learning rate.
-batch_size = 8  # the powers of 2
+batch_size = 512  # the powers of 2
 lr_decay = 0.9
 lr_patience = 10
 stop_patience = lr_patience + 10
-dropout_rate = 0.4
-train_ratio = 0.6
-val_ratio = 0.2
+dropout_rate = 0.5
+train_ratio = 0.5
+val_ratio = 0.25
 # something else?
 
 # Load dataset and prepare dataloaders=========================================
-dataset = Dataset(dataset_name="100k", batch_size=batch_size)
+dataset = Dataset(dataset_name="1m", batch_size=batch_size)
 dataset.chrono_split(train_ratio=train_ratio, val_ratio=val_ratio)
 print(dataset.train_df.columns)
 

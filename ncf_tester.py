@@ -15,6 +15,7 @@ class Evaluator:
 
         with torch.no_grad():  # No need to track gradients for evaluation
             for user_ids, item_ids, ratings in self.test_dataloader:
+
                 predictions = self.model(user_ids, item_ids).view(-1)
                 mse_sum += ((predictions - ratings) ** 2).sum().item()
                 mae_sum += torch.abs(predictions - ratings).sum().item()

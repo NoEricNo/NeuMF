@@ -79,7 +79,6 @@ class Trainer:
                 running_loss += loss.item()
 
             validation_loss = self.validate()
-            print(f'Epoch: {epoch}, Validation Loss: {validation_loss}')
 
             if validation_loss < best_val_loss:
                 best_val_loss = validation_loss
@@ -93,8 +92,8 @@ class Trainer:
                     break
 
             self.scheduler.step(validation_loss)
+            print(f'Epoch [{epoch + 1}/{self.num_epochs}], Loss: {running_loss / len(self.train_dataloader)}, Validation Loss: {validation_loss}')
 
-            print(f'Epoch [{epoch + 1}/{self.num_epochs}], Loss: {running_loss / len(self.train_dataloader)}')
 
 # Assuming model, train_dataloader, num_users, num_items are already defined
 # trainer = Trainer(model, train_dataloader, num_users, num_items)
